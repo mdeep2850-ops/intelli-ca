@@ -1,0 +1,10 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.item {
+  width: 100%;
+}

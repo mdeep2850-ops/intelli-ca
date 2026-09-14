@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: intelli-ca-backend
+    env: python
+    buildCommand: "cd backend && pip install -r requirements.txt"
+    startCommand: "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DEBUG
+        value: "False"
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: intelli-ca-frontend
+          envVarKey: RENDER_EXTERNAL_URL
+    disk:
+      name: intelli-ca-data
+      mountPath: /opt/render/project/src/backend/data
+      sizeGB: 1
+
+  - type: web
+    name: intelli-ca-frontend
+    env: static
+    buildCommand: "cd frontend && npm install && npm run build"
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: intelli-ca-backend
+          envVarKey: RENDER_EXTERNAL_URL
